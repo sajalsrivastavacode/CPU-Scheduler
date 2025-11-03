@@ -3,45 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPU Scheduler Simulator</title>
+    <title>AI Canvas - Cloud Art Collaboration Platform</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 <body>
 
-    <!-- Neon Header with Image -->
-    <div class="image-container">
-        <img src="image/icons8-task-48.png" alt="CPU" class="neon-image">
-        <h1>CPU Scheduler Simulator</h1>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container">
-        <label for="algorithm">Choose Algorithm:</label>
-        <select id="algorithm">
-            <option value="FCFS">FCFS</option>
-            <option value="SJF">SJF</option>
-            <option value="RoundRobin">Round Robin</option>
-        </select>
-
-        <div id="quantumInput" style="display: none;">
-            <label for="quantum">Time Quantum:</label>
-            <input type="number" id="quantum" min="1">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>AI Canvas</h1>
+                <p>Collaborative Art Platform</p>
+            </div>
+            <nav class="nav">
+                <button id="loginBtn" class="auth-btn">Login</button>
+                <button id="profileBtn" class="auth-btn" style="display: none;">Profile</button>
+            </nav>
         </div>
+    </header>
 
-        <table id="processTable">
-            <tr>
-                <th>Process ID</th>
-                <th>Arrival Time</th>
-                <th>Burst Time</th>
-            </tr>
-        </table>
-        <button onclick="addProcess()">Add Process</button>
-        <button onclick="runSimulation()">Run Simulation</button>
+    <!-- Main Application -->
+    <main class="main-app">
+        <!-- Sidebar with Tools -->
+        <aside class="sidebar">
+            <div class="tool-panel">
+                <h3>Drawing Tools</h3>
+                <div class="tool-group">
+                    <button class="tool-btn active" data-tool="brush">🖌️ Brush</button>
+                    <button class="tool-btn" data-tool="eraser">🧹 Eraser</button>
+                    <button class="tool-btn" data-tool="fill">🪣 Fill</button>
+                    <button class="tool-btn" data-tool="select">⬚ Select</button>
+                </div>
 
-        <!-- Results Section -->
-        <h2>Results</h2>
-        <div id="loading" class="loader" style="display: none;"></div>
-        <pre id="output"></pre>
+                <div class="tool-settings">
+                    <label>Size: <input type="range" id="brushSize" min="1" max="50" value="5"></label>
+                    <label>Color: <input type="color" id="colorPicker" value="#000000"></label>
+                    <label>Opacity: <input type="range" id="opacity" min="0" max="100" value="100"></label>
+                </div>
+            </div>
+
+            <div class="layer-panel">
+                <h3>Layers</h3>
+                <div id="layersList">
+                    <div class="layer-item active">
+                        <span>Background</span>
+                        <div class="layer-controls">
+                            <button>👁️</button>
+                            <button>🔒</button>
+                        </div>
+                    </div>
+                </div>
+                <button id="addLayerBtn">+ Add Layer</button>
+            </div>
+
+            <div class="ai-panel">
+                <h3>AI Assistant</h3>
+                <button id="aiCompleteBtn">✨ Complete Sketch</button>
+                <button id="aiStyleBtn">🎨 Style Transfer</button>
+                <select id="styleSelect">
+                    <option value="van-gogh">Van Gogh</option>
+                    <option value="anime">Anime</option>
+                    <option value="watercolor">Watercolor</option>
+                    <option value="oil-painting">Oil Painting</option>
+                </select>
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <section class="canvas-container">
+            <div class="canvas-header">
+                <div class="canvas-info">
+                    <span id="canvasTitle">Untitled Canvas</span>
+                    <span id="collaborators">👤 1 user</span>
+                </div>
+                <div class="canvas-controls">
+                    <button id="zoomIn">🔍+</button>
+                    <button id="zoomOut">🔍-</button>
+                    <button id="fitCanvas">⊡ Fit</button>
+                    <button id="saveBtn">💾 Save</button>
+                    <button id="shareBtn">🔗 Share</button>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="drawingCanvas" width="800" height="600"></canvas>
+                <div id="loadingIndicator" class="loader" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="collaboration-panel">
+                <h3>Collaboration</h3>
+                <div id="activeUsers">
+                    <div class="user-item">
+                        <div class="user-avatar">👤</div>
+                        <span>You</span>
+                    </div>
+                </div>
+                <div class="session-controls">
+                    <input type="text" id="shareLink" readonly placeholder="Share link...">
+                    <button id="copyLinkBtn">📋 Copy</button>
+                </div>
+            </div>
+
+            <div class="gallery-panel">
+                <h3>Your Gallery</h3>
+                <div id="galleryItems">
+                    <!-- Gallery items will be populated here -->
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login to AI Canvas</h2>
+            <div class="auth-options">
+                <button id="googleLoginBtn" class="oauth-btn">
+                    <span>🔵</span> Login with Google
+                </button>
+                <button id="githubLoginBtn" class="oauth-btn">
+                    <span>⚫</span> Login with GitHub
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
